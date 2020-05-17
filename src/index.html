@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reason react starter</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      function load() {
+        function layout() {
+          var GLOBAL_PADDING = 20;
+
+          var WIDTH = window.innerWidth - 2 * GLOBAL_PADDING;
+          var HEIGHT = window.innerHeight;
+
+          var TITLE_HEIGHT = 110;
+          var FOOTER_HEIGHT = 80;
+          var TABS_HEIGHT = 20;
+          var INNER_PADDING = 20;
+          var SWITCHER_HEIGHT = 30;
+
+          var HALF_WIDTH = Math.floor((WIDTH - INNER_PADDING) / 2);
+          var REMAINING_HEIGHT =
+            HEIGHT - TITLE_HEIGHT - FOOTER_HEIGHT - SWITCHER_HEIGHT;
+
+          playgroundContainer.style.width = WIDTH + "px";
+          playgroundContainer.style.height = HEIGHT - FOOTER_HEIGHT + "px";
+
+          // sampleSwitcher.style.position = "absolute";
+          // sampleSwitcher.style.top = TITLE_HEIGHT + "px";
+          // sampleSwitcher.style.left = GLOBAL_PADDING + "px";
+
+          // typingContainer.style.position = "absolute";
+          // typingContainer.style.top =
+          //   GLOBAL_PADDING + TITLE_HEIGHT + SWITCHER_HEIGHT + "px";
+          // typingContainer.style.left = GLOBAL_PADDING + "px";
+          // typingContainer.style.width = HALF_WIDTH + "px";
+          // typingContainer.style.height = REMAINING_HEIGHT + "px";
+
+          // tabArea.style.position = "absolute";
+          // tabArea.style.boxSizing = "border-box";
+          // tabArea.style.top = 0;
+          // tabArea.style.left = 0;
+          // tabArea.style.width = HALF_WIDTH + "px";
+          // tabArea.style.height = TABS_HEIGHT + "px";
+
+          // editorContainer.style.position = "absolute";
+          // editorContainer.style.boxSizing = "border-box";
+          // editorContainer.style.top = TABS_HEIGHT + "px";
+          // editorContainer.style.left = 0;
+          // editorContainer.style.width = HALF_WIDTH + "px";
+          // editorContainer.style.height = REMAINING_HEIGHT - TABS_HEIGHT + "px";
+
+          // if (editor) {
+          //   editor.layout({
+          //     width: HALF_WIDTH - 2,
+          //     height: REMAINING_HEIGHT - TABS_HEIGHT - 1,
+          //   });
+          // }
+
+          // runContainer.style.position = "absolute";
+          // runContainer.style.top =
+          //   GLOBAL_PADDING +
+          //   TITLE_HEIGHT +
+          //   SWITCHER_HEIGHT +
+          //   TABS_HEIGHT +
+          //   "px";
+          // runContainer.style.left =
+          //   GLOBAL_PADDING + INNER_PADDING + HALF_WIDTH + "px";
+          // runContainer.style.width = HALF_WIDTH + "px";
+          // runContainer.style.height = REMAINING_HEIGHT - TABS_HEIGHT + "px";
+
+          // runIframeHeight = REMAINING_HEIGHT - TABS_HEIGHT;
+          // if (runIframe) {
+          //   runIframe.style.height = runIframeHeight + "px";
+          // }
+        }
+
+        var playgroundContainer = document.getElementById("playground");
+        layout();
+        window.onresize = layout;
+      }
+      window.onload = function () {
+        load();
+      };
+    </script>
+    <script src="/Index.js"></script>
+  </body>
+</html>
