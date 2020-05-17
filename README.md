@@ -25,4 +25,4 @@ yarn build
 yarn webpack:production
 ```
 
-This will replace the development artifact `build/Index.js` for an optimized version as well as copy `src/index.html` into `build/`. You can then deploy the contents of the `build` directory (`index.html` and `Index.js`).
+This will replace the development artifact `docs/Index.js` for an optimized version as well as copy `src/index.html` into `docs/`. You can then deploy the contents of the `docs` directory (`index.html` and `Index.js`).
