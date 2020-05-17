@@ -1,6 +1,8 @@
 # PPX explorer 
 
-See how the resulting code after applying the most used PPXs transformations.
+See how the resulting code after applying the most used PPXs transformations: 
+
+https://jchavarri.github.io/ppx-explorer/
 
 (note: Currently targeting Reason syntax and ReasonReact PPX exclusively, PRs welcomed!)
 
