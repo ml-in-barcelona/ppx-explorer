@@ -39,7 +39,6 @@ module Editor: {
     "default";
 };
 
-
 module DiffViewer: {
   [@react.component]
   let make:

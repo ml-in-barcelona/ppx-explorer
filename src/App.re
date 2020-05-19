@@ -1,48 +1,22 @@
 module Window = {
   type t;
-  [@bs.val] external window: t;
+  [@bs.val] external window: t = "window";
   [@bs.get] external innerWidth: t => int;
   [@bs.get] external innerHeight: t => int;
   [@bs.set] external onResize: (t, unit => unit) => unit = "onresize";
 };
 
-type state = {source: string};
+type state = {
+  source: string,
+  result: Belt.Result.t(string, exn),
+  worker: option(Worker.worker),
+};
 
 type action =
   | EditorValueChanged(string)
+  | WorkerCreated(Worker.worker)
+  | WorkerMessageReceived(Bridge.fromWorker)
   | WindowResized;
-
-module Converter =
-  Reason_toolchain_packed.Migrate_parsetree.Convert(
-    Reason_toolchain_packed.Migrate_parsetree.OCaml_408,
-    Reason_toolchain_packed.Migrate_parsetree.OCaml_406,
-  );
-module ConverterBack =
-  Reason_toolchain_packed.Migrate_parsetree.Convert(
-    Reason_toolchain_packed.Migrate_parsetree.OCaml_406,
-    Reason_toolchain_packed.Migrate_parsetree.OCaml_408,
-  );
-
-let fromSource = code =>
-  try({
-    let lexbuf = Lexing.from_string(code);
-    let (_ast, comments) =
-      lexbuf |> Refmt_api.RE.implementation_with_comments;
-    let reactAst =
-      lexbuf
-      ->Reason_toolchain_packed.Reason_toolchain.RE.implementation
-      ->Converter.copy_structure;
-    let newAst = ReasonReactPpx.rewrite_implementation(reactAst);
-    Refmt_api.RE.print_implementation_with_comments(
-      Format.str_formatter,
-      (newAst->ConverterBack.copy_structure, comments),
-    );
-    Ok(Format.flush_str_formatter());
-  }) {
-  | exn =>
-    Js.log(exn);
-    Error(exn);
-  };
 
 let initialReasonReact = "module Greeting = {
   [@react.component]
@@ -53,12 +27,18 @@ let initialReasonReact = "module Greeting = {
 
 ReactDOMRe.renderToElementWithId(<Greeting />, \"preview\");";
 
-let initialState = {source: initialReasonReact};
+let initialState = {
+  source: initialReasonReact,
+  result: Ok(""),
+  worker: None,
+};
 
 let reducer = (state, action) =>
   switch (action) {
-  | EditorValueChanged(code) => {source: code}
-  | WindowResized => {source: state.source} /* Return new copy so component re-renders (without having to add window size to state) */
+  | EditorValueChanged(code) => {...state, source: code}
+  | WorkerCreated(worker) => {...state, worker: Some(worker)}
+  | WorkerMessageReceived({result}) => {...state, result}
+  | WindowResized => {...state, source: state.source} /* Return new copy so component re-renders (without having to add window size to state) */
   };
 
 module Style = {
@@ -94,12 +74,27 @@ module Editor = {
 let make = () => {
   let (state, dispatch) = React.useReducer(reducer, initialState);
 
-  React.useEffect(() => {
+  React.useEffect0(() => {
     Window.(window->onResize(() => {dispatch @@ WindowResized}));
+    let worker = Bridge.make();
+    dispatch @@ WorkerCreated(worker);
+    worker->Bridge.App.onMessage(res =>
+      dispatch @@ WorkerMessageReceived(res##data)
+    );
+    // worker->Toplevel.Top.onErrorFromWorker(Js.log);
     None;
   });
 
-  let processed = fromSource(state.source);
+  React.useEffect2(
+    () => {
+      switch (state.worker) {
+      | Some(worker) => worker->Bridge.App.postMessage({code: state.source})
+      | None => ()
+      };
+      None;
+    },
+    (state.source, state.worker),
+  );
 
   let width = Window.(window->innerWidth) - 2 * Style.globalPadding;
   let height = Window.(window->innerHeight);
@@ -127,7 +122,7 @@ let make = () => {
       width=halfWidth
       height=remainingHeight
       value={
-        switch (processed) {
+        switch (state.result) {
         | Ok(res) => res
         | Error(_err) => "err"
         }
