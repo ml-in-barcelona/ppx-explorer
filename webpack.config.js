@@ -26,6 +26,10 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.RefmtWorker\.bs\.js$/,
+        use: ["worker-loader"]
+      },
+      {
         test: /\.css$/,
         use: ["style-loader", "css-loader"]
       }
