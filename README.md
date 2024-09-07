@@ -2,7 +2,7 @@
 
 See how the resulting code after applying the most used PPXs transformations: 
 
-https://jchavarri.github.io/ppx-explorer/
+https://ml-in-barcelona.github.io/ppx-explorer/
 
 (note: Currently targeting Reason syntax and ReasonReact PPX exclusively, PRs welcomed!)
 
